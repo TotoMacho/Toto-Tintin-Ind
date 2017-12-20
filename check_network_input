@@ -1,0 +1,24 @@
+#!/bin/bash
+
+PacketReceived=$(netstat -s | awk '{print $1}' | sed -n '2p')
+PacketDelivered=$(netstat -s | awk '{print $1}' | sed -n '5p')
+PacketLost=$(($PacketReceived - $PacketDelivered))
+PctPacketRSuccess=$(bc <<< "scale = 2; (($PacketReceived - $PacketLost) / $PacketReceived * 100)") 
+int=${PctPacketRSuccess%.*}
+
+if [ $int -gt 75 ]
+then
+	echo "OK- % of successfully send packets is $int%"
+	exit 0
+elif [ $int -lt 50 ]
+then
+	echo "CRITICAL- % of successfully send packets is $int%"
+	exit 1
+elif [ $int -lt 75 ]
+then
+	echo "WARNING- % of successfully send packets is $int%"
+	exit 2
+else
+	echo "UNKNOWN"
+	exit 3
+fi
