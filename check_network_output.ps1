@@ -39,7 +39,7 @@ $line = $line -split '\s+'
     
 
 }
-$PctRSuccess = $Packet.SendPacket / ($Packet.SendPacket - $Reject.SendReject - $Errors.SendErrors ) * 100
+$PctRSuccess =  ($Packet.SendPacket - $Reject.SendReject - $Errors.SendErrors ) / $Packet.SendPacket * 100
 $PctRFailed = 100 - $PctRSuccess
 
 if($PctRSuccess -gt 75){
