@@ -19,7 +19,7 @@ $line = $line -split '\s+'
  $properties = @{
         Name = $line[0]
         ReceivedReject = $line[1]
-        SendReject = $line[1]
+        SendReject = $line[2]
     }
 
     $Reject = New-Object -TypeName PSObject -Property $properties 
@@ -32,7 +32,7 @@ $line = $line -split '\s+'
  $properties = @{
         Name = $line[0]
         ReceivedErrors = $line[1]
-        SendErrors = $line[1]
+        SendErrors = $line[2]
     }
 
     $Errors = New-Object -TypeName PSObject -Property $properties 
