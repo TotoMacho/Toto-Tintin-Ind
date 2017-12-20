@@ -49,16 +49,16 @@ if($PctRSuccess -gt 75){
 
 }elseif($PctRSuccess -lt 75){
 
-    Write-Host "WARNING- $PctRFailed% of packets are lost"
+    Write-Host "WARNING- $PctRFailed% of received packets are lost"
     exit 1
 
 }elseif($PctRSucces -lt 50){
 
-    Write-Host "CRITICAL- $PctRFailed% of packets are lost"
+    Write-Host "CRITICAL- $PctRFailed% of received packets are lost"
     exit 2
 
 }else{
 
-    Write-Host "UNKNOWN- No information about packet lost"
+    Write-Host "UNKNOWN- No information about received packet lost"
     exit 3
 }

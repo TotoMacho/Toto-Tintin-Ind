@@ -44,21 +44,21 @@ $PctRFailed = 100 - $PctRSuccess
 
 if($PctRSuccess -gt 75){
 
-    Write-Host "OK- % of successfully received packet is $PctRSuccess%"
+    Write-Host "OK- % of successfully send packets is $PctRSuccess%"
     exit 0
 
 }elseif($PctRSuccess -lt 75){
 
-    Write-Host "WARNING- $PctRFailed% of packets are lost"
+    Write-Host "WARNING- $PctRFailed% of send packets are lost"
     exit 1
 
 }elseif($PctRSucces -lt 50){
 
-    Write-Host "CRITICAL- $PctRFailed% of packets are lost"
+    Write-Host "CRITICAL- $PctRFailed% of send packets are lost"
     exit 2
 
 }else{
 
-    Write-Host "UNKNOWN- No information about packet lost"
+    Write-Host "UNKNOWN- No information about packets"
     exit 3
 }
