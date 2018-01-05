@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from mitmproxy import ctxm http
+from mitmproxy import ctxm, http
 import argparse
 
 class Injector:
