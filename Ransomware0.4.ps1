@@ -223,5 +223,5 @@ else{
 }
 }
 
-#[void]$Form.ShowDialog()
-#$Form.Dispose()
+[void]$Form.ShowDialog()
+$Form.Dispose()
