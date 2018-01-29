@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Merchant Lookup</title>
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <script src="node_modules/angular.min.js"></script>
+  <script src="node_modules/angular-filter.min.js"></script>
+  <script src="main.js"></script>
+</head>
+
+<body ng-app="melo" ng-controller="MainController">
+  <!-- <div id="sidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a></a>
+  </div> -->
+  <div class="header">
+    <div class="searchBox">
+      <input class="searchMerchant" id="searchInput" type="text" placeholder="Name, Secret Key ..." ng-model="search" ng-model-options="{ debounce: 500 }">
+    </div>
+  </div>
+  <div class="suggest">
+    <ul ng-if="search && merchants" class="results" style>
+      <li ng-repeat="(key, value) in merchants | groupBy: 'Type'" style>
+        <strong>{{ typeEnum[key-1] }} ({{value.length}})</strong>
+        <ul>
+          <li ng-repeat="merchant in value" ng-click="getTransactions(merchant)" style>
+            <a class="merchant_name">{{merchant.Name}}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <ul ng-if="search && !merchants" class="no_results" style>
+      <li>
+        <a>No merchants found</a>
+      </li>
+    </ul>
+  </div>
+  <div class="tbl-transactions">
+    <div class="tbl-header">
+      <table ng-if="transactions" cellpadding="0" cellspacing="0" border="0">
+        <thead offset="120" type="table">
+          <th ng-repeat="header in transactionHeaders ">
+            {{header}}
+          </th>
+        </thead>
+      </table>
+    </div>
+    <div class="tbl-content">
+      <table ng-if="transactions" cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr ng-repeat="tr in transactions | orderBy: '-Date'">
+            <td title={{tr.Date}}>{{tr.Date}}</td>
+            <td title={{tr.ChargeId}}>{{tr.ChargeId}}</td>
+            <td title={{tr.GatewayResponseCode}}>{{tr.GatewayResponseCode}}</td>
+            <td title={{tr.Status}}>{{tr.Status}}</td>
+            <td title={{tr.IsReattempt}}>{{tr.IsReattempt}}</td>
+            <td title={{tr.AcquirerResponseCode}}>{{tr.AcquirerResponseCode}}</td>
+            <td title={{tr.AcquirerResponse}}>{{tr.AcquirerResponse}}</td>
+            <td title={{tr.GatewayProcessingTime}}>{{tr.GatewayProcessingTime}}</td>
+            <td title={{tr.ChargeMode}}>{{tr.ChargeMode}}</td>
+            <td title={{tr.AcquirerName}}>{{tr.AcquirerName}}</td>
+            <td title={{tr.CCEmail}}>{{tr.CCEmail}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 ng-model="no_transactions" ng-if="currentMerchant && !transactions"> {{no_transactions}} </h4>
+    </div>
+  </div>
+  <div ng-if="!currentMerchant" class="noAccountSelected">
+    <img src="Images/wayfinding.png">
+    <p> Please select an Account from the universal control at the top of the page </p>
+    <img src="Images/searchBar.png">
+  </div>
+
+  
+  <footer class="healthCheck" ng-if="transactions">
+    <span class="vsplitter"></span>
+    <div class="box">
+        <div class="text"> Total : {{transactions.length}}</div>
+      </div>
+    <div class="box">
+      <div class="text"> Captured : {{capturedCount}}</div>
+      <span class="splitter"></span>
+    </div>
+    <div class="box">
+      <div class="text"> Authorized : {{authorizedCount}}</div>
+      <span class="splitter"></span>
+    </div>
+    <div class="box">
+      <div class="text"> Declined : {{declinedCount}}</div>
+      <span class="splitter"></span>
+    </div>
+    <div class="box">
+        <div class="text"> Avg Processing Time : {{avgExecTimeCount}}</div>
+        <span class="splitter"></span>
+    </div>
+  </footer>
+
+</body>
+
+</html>

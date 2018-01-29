@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Merchant Lookup</title>
+  <link rel="stylesheet" type="text/css" href="login.css">
+  <script src="node_modules/angular.min.js"></script>
+  <script src="node_modules/angular-filter.min.js"></script>
+  <script src="main.js"></script>
+</head>
+
+<body ng-app="melo" ng-controller="LoginController">
+    <div class="login-container">
+        <h1> Sign-in </h1>
+        <input class="login_form username" ng-model="username" type="email" placeholder="Email" />
+        <input class="login_form password" ng-model="password" type="password" placeholder="Super Duper Secret Password" />
+        <button id="sign_in_button" class="login_form signin"  ng-click="login()" >{{signin}}</button>
+        <p class="login-error-message" show="loginErrorMessage.lenght" > {{loginErrorMessage}} </p>
+    </div>
+   
+</body>
+
+</html>
