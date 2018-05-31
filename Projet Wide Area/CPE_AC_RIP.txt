@@ -1,0 +1,14 @@
+int fastEthernet 0/0
+ip address 192.168.2.2 255.255.255.252
+no shut
+exit 
+
+int fastEthernet 2/0
+ip address 192.168.2.14 255.255.255.252 
+no shut
+exit
+
+router rip
+network 192.168.2.12 
+network 192.168.2.0 
+version 2

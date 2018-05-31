@@ -1,0 +1,13 @@
+int fastEthernet 0/0
+ip address 192.168.3.2 255.255.255.252
+no shut
+exit 
+
+int fastEthernet 2/0
+ip address 192.168.3.14 255.255.255.252 
+no shut
+exit
+
+router eigrp 90
+network 192.168.3.12 0.0.0.3
+network 192.168.3.0 0.0.0.3

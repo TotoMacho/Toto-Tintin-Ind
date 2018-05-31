@@ -1,0 +1,21 @@
+int gigabitEthernet 1/0
+ip address 192.168.1.1 255.255.255.252
+no shut
+exit 
+
+int gigabitEthernet 2/0
+ip address 192.168.1.5 255.255.255.252 
+no shut
+exit
+
+int gigabitEthernet 3/0
+ip address 192.168.1.21 255.255.255.252 
+no shut
+exit
+
+router ospf 100
+network 192.168.1.20 0.0.0.3 area 1
+network 192.168.1.0 0.0.0.3 area 1
+network 192.168.1.4 0.0.0.3 area 1
+
+

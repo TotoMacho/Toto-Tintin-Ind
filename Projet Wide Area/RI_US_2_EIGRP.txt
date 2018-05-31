@@ -1,0 +1,13 @@
+int gigabitEthernet 1/0
+ip address 192.168.3.6 255.255.255.252
+no shut
+exit 
+
+int gigabitEthernet 2/0
+ip address 192.168.3.9 255.255.255.252 
+no shut
+exit
+
+router eigrp 90
+network 192.168.3.4 0.0.0.3
+network 192.168.3.8 0.0.0.3

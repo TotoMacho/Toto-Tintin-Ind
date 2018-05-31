@@ -1,0 +1,13 @@
+int fastEthernet 0/0
+ip address 192.168.1.2 255.255.255.252
+no shut
+exit 
+
+int fastEthernet 2/0
+ip address 192.168.1.14 255.255.255.252 
+no shut
+exit
+
+router ospf 100
+network 192.168.1.12 0.0.0.3 area 1
+network 192.168.1.0 0.0.0.3 area 1
